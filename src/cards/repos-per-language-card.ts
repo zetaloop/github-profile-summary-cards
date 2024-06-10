@@ -15,15 +15,20 @@ export const createReposPerLanguageCard = async function (username: string, excl
 export const getReposPerLanguageSVGWithThemeName = async function (
     username: string,
     themeName: string,
-    exclude: Array<string>
+    exclude: Array<string>,
+    noBg: boolean
 ) {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const langData = await getRepoLanguageData(username, exclude);
-    return getReposPerLanguageSVG(langData, themeName);
+    return getReposPerLanguageSVG(langData, themeName, noBg);
 };
 
-const getReposPerLanguageSVG = function (langData: {name: string; value: number; color: string}[], themeName: string) {
-    const svgString = createDonutChartCard('Top Languages by Repo', langData, ThemeMap.get(themeName)!);
+const getReposPerLanguageSVG = function (langData: { name: string; value: number; color: string }[], themeName: string, noBg = false) {
+    var theme = ThemeMap.get(themeName)!;
+    if (noBg) {
+        theme.background = 'transparent';
+    }
+    const svgString = createDonutChartCard('Top Languages by Repo', langData, theme);
     return svgString;
 };
 

@@ -5,7 +5,7 @@ import {translateLanguage} from '../../src/utils/translator';
 import type {VercelRequest, VercelResponse} from '@vercel/node';
 
 export default async (req: VercelRequest, res: VercelResponse) => {
-    let {username, theme = 'default', exclude = ''} = req.query;
+    let {username, theme = 'default', exclude = '', no_bg = 'false'} = req.query;
 
     if (typeof theme !== 'string') {
         res.status(400).send('theme must be a string');
@@ -19,6 +19,10 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         res.status(400).send('exclude must be a string');
         return;
     }
+    if (typeof no_bg !== 'string') {
+        res.status(400).send('no_bg must be a string');
+        return;
+    }
     let excludeArr = <string[]>[];
     exclude.split(',').forEach(function (val) {
         const translatedLanguage = translateLanguage(val);
@@ -29,7 +33,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         let tokenIndex = 0;
         while (true) {
             try {
-                const cardSVG = await getReposPerLanguageSVGWithThemeName(username, theme, excludeArr);
+                const cardSVG = await getReposPerLanguageSVGWithThemeName(username, theme, excludeArr, no_bg === 'true');
                 res.setHeader('Content-Type', 'image/svg+xml');
                 res.send(cardSVG);
                 return;
