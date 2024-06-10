@@ -15,19 +15,25 @@ export const createProductiveTimeCard = async function (username: string, utcOff
 export const getProductiveTimeSVGWithThemeName = async function (
     username: string,
     themeName: string,
-    utcOffset: number
+    utcOffset: number,
+    noBg: boolean
 ) {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const productiveTimeData = await getProductiveTimeData(username, utcOffset);
-    return getProductiveTimeSVG(productiveTimeData, themeName, utcOffset);
+    return getProductiveTimeSVG(productiveTimeData, themeName, utcOffset, noBg);
 };
 
 const getProductiveTimeSVG = function (
     productiveTimeData: Array<number>,
     themeName: string,
-    utcOffset: number
+    utcOffset: number,
+    noBg = false
 ): string {
-    const svgString = productiveTimeCard(productiveTimeData, ThemeMap.get(themeName)!, utcOffset);
+    var theme = ThemeMap.get(themeName)!;
+    if (noBg) {
+        theme.background = 'transparent';
+    }
+    const svgString = productiveTimeCard(productiveTimeData, theme, utcOffset);
     return svgString;
 };
 

@@ -4,7 +4,7 @@ import {getErrorMsgCard} from '../utils/error-card';
 import type {VercelRequest, VercelResponse} from '@vercel/node';
 
 export default async (req: VercelRequest, res: VercelResponse) => {
-    const {username, theme = 'default'} = req.query;
+    const {username, theme = 'default', no_bg = 'false'} = req.query;
     if (typeof theme !== 'string') {
         res.status(400).send('theme must be a string');
         return;
@@ -13,11 +13,15 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         res.status(400).send('username must be a string');
         return;
     }
+    if (typeof no_bg !== 'string') {
+        res.status(400).send('no_bg must be a string');
+        return;
+    }
     try {
         let tokenIndex = 0;
         while (true) {
             try {
-                const cardSVG = await getProfileDetailsSVGWithThemeName(username, theme);
+                const cardSVG = await getProfileDetailsSVGWithThemeName(username, theme, no_bg === 'true');
                 res.setHeader('Content-Type', 'image/svg+xml');
                 res.send(cardSVG);
                 return;

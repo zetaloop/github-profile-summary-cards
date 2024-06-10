@@ -21,20 +21,25 @@ export const createProfileDetailsCard = async function (username: string) {
         writeSVG(themeName, '0-profile-details', svgString);
     }
 };
-export const getProfileDetailsSVGWithThemeName = async function (username: string, themeName: string): Promise<string> {
+export const getProfileDetailsSVGWithThemeName = async function (username: string, themeName: string, noBg: boolean): Promise<string> {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const profileDetailsData = await getProfileDetailsData(username);
     const title = profileDetailsData[0].name == null ? `${username}` : `${username} (${profileDetailsData[0].name})`;
-    return getProfileDetailsSVG(title, profileDetailsData[0].contributions, profileDetailsData[1], themeName);
+    return getProfileDetailsSVG(title, profileDetailsData[0].contributions, profileDetailsData[1], themeName, noBg);
 };
 
 const getProfileDetailsSVG = function (
     title: string,
     contributionsData: ProfileContribution[],
     userDetails: {index: number; icon: string; name: string; value: string}[],
-    themeName: string
+    themeName: string,
+    noBg = false
 ): string {
-    const svgString = createDetailCard(`${title}`, userDetails, contributionsData, ThemeMap.get(themeName)!);
+    var theme = ThemeMap.get(themeName)!;
+    if (noBg) {
+        theme.background = 'transparent';
+    }
+    const svgString = createDetailCard(`${title}`, userDetails, contributionsData, theme);
     return svgString;
 };
 
