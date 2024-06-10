@@ -16,22 +16,27 @@ export const getProductiveTimeSVGWithThemeName = async function (
     username: string,
     themeName: string,
     utcOffset: number,
-    noBg: boolean
+    noBg: boolean,
+    noStroke: boolean
 ) {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const productiveTimeData = await getProductiveTimeData(username, utcOffset);
-    return getProductiveTimeSVG(productiveTimeData, themeName, utcOffset, noBg);
+    return getProductiveTimeSVG(productiveTimeData, themeName, utcOffset, noBg, noStroke);
 };
 
 const getProductiveTimeSVG = function (
     productiveTimeData: Array<number>,
     themeName: string,
     utcOffset: number,
-    noBg = false
+    noBg = false,
+    noStroke = false
 ): string {
     var theme = ThemeMap.get(themeName)!;
     if (noBg) {
         theme.background = 'transparent';
+    }
+    if (noStroke) {
+        theme.strokeOpacity = 0;
     }
     const svgString = productiveTimeCard(productiveTimeData, theme, utcOffset);
     return svgString;

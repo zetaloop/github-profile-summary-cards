@@ -21,11 +21,11 @@ export const createProfileDetailsCard = async function (username: string) {
         writeSVG(themeName, '0-profile-details', svgString);
     }
 };
-export const getProfileDetailsSVGWithThemeName = async function (username: string, themeName: string, noBg: boolean): Promise<string> {
+export const getProfileDetailsSVGWithThemeName = async function (username: string, themeName: string, noBg: boolean, noStroke: boolean): Promise<string> {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const profileDetailsData = await getProfileDetailsData(username);
     const title = profileDetailsData[0].name == null ? `${username}` : `${username} (${profileDetailsData[0].name})`;
-    return getProfileDetailsSVG(title, profileDetailsData[0].contributions, profileDetailsData[1], themeName, noBg);
+    return getProfileDetailsSVG(title, profileDetailsData[0].contributions, profileDetailsData[1], themeName, noBg, noStroke);
 };
 
 const getProfileDetailsSVG = function (
@@ -33,11 +33,15 @@ const getProfileDetailsSVG = function (
     contributionsData: ProfileContribution[],
     userDetails: {index: number; icon: string; name: string; value: string}[],
     themeName: string,
-    noBg = false
+    noBg = false,
+    noStroke = false
 ): string {
     var theme = ThemeMap.get(themeName)!;
     if (noBg) {
         theme.background = 'transparent';
+    }
+    if (noStroke) {
+        theme.strokeOpacity = 0;
     }
     const svgString = createDetailCard(`${title}`, userDetails, contributionsData, theme);
     return svgString;

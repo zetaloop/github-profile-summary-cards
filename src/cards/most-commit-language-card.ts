@@ -16,17 +16,19 @@ export const getCommitsLanguageSVGWithThemeName = async function (
     username: string,
     themeName: string,
     exclude: Array<string>,
-    noBg: boolean
+    noBg: boolean,
+    noStroke: boolean
 ): Promise<string> {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const langData = await getCommitsLanguageData(username, exclude);
-    return getCommitsLanguageSVG(langData, themeName, noBg);
+    return getCommitsLanguageSVG(langData, themeName, noBg, noStroke);
 };
 
 const getCommitsLanguageSVG = function (
     langData: {name: string; value: number; color: string}[],
     themeName: string,
-    noBg = false
+    noBg = false,
+    noStroke = false
 ): string {
     if (langData.length == 0) {
         langData.push({
@@ -48,6 +50,9 @@ const getCommitsLanguageSVG = function (
     var theme = ThemeMap.get(themeName)!;
     if (noBg) {
         theme.background = 'transparent';
+    }
+    if (noStroke) {
+        theme.strokeOpacity = 0;
     }
     const svgString = createDonutChartCard('Top Languages by Commit', langData, theme);
     return svgString;

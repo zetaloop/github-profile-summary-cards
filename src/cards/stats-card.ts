@@ -15,21 +15,25 @@ export const createStatsCard = async function (username: string) {
     }
 };
 
-export const getStatsSVGWithThemeName = async function (username: string, themeName: string, noBg: boolean) {
+export const getStatsSVGWithThemeName = async function (username: string, themeName: string, noBg: boolean, noStroke: boolean) {
     if (!ThemeMap.has(themeName)) throw new Error('Theme does not exist');
     const statsData = await getStatsData(username);
-    return getStatsSVG(statsData, themeName, noBg);
+    return getStatsSVG(statsData, themeName, noBg, noStroke);
 };
 
 const getStatsSVG = function (
     StatsData: {index: number; icon: string; name: string; value: string}[],
     themeName: string,
-    noBg = false
+    noBg = false,
+    noStroke = false
 ) {
     const title = 'Stats';
     var theme = ThemeMap.get(themeName)!;
     if (noBg) {
         theme.background = 'transparent';
+    }
+    if (noStroke) {
+        theme.strokeOpacity = 0;
     }
     const svgString = statsCard(`${title}`, StatsData, theme);
     return svgString;
