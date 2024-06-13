@@ -48,13 +48,13 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         return;
     }
     let customTheme = new Theme(
-        "#" + title_color,
-        "#" + text_color,
-        "#" + bg_color,
-        "#" + border_color,
+        title_color,
+        text_color,
+        bg_color,
+        border_color,
         -1,  // strokeOpacity is not used in custom themes
-        "#" + icon_color,
-        "#" + chart_color
+        icon_color,
+        chart_color
     );
 
     try {
