@@ -46,13 +46,22 @@ export function createDonutChartCard(
         .data(labelData)
         .enter()
         .append('text')
-        .text(d => {
-            return d.name;
-        })
         .attr('x', labelHeight * 1.2)
         .attr('y', (d, i) => labelHeight * i * 1.8 + card.height / 2 - radius)
-        .style('fill', theme.text)
-        .style('font-size', `${labelHeight}px`);
+        .style('font-size', `${labelHeight}px`)
+        .each(function (d) {
+            const [mainText, subText] = d.name.split(' - ');
+            d3.select(this)
+                .append('tspan')
+                .text(mainText)
+                .style('fill', theme.text);
+            if (subText) {
+                d3.select(this)
+                    .append('tspan')
+                    .text(' - ' + subText)
+                    .style('fill', theme.text + 'a0')
+            }
+        });
 
     // draw pie chart
     const g = svg
