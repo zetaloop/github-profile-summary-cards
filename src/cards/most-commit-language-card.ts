@@ -55,11 +55,23 @@ const getCommitsLanguageSVG = function (
         if (customTheme.chart) theme.chart = "#" + customTheme.chart;
     }
     const totalCommits = langData.reduce((sum, lang) => sum + lang.value, 0);
-    langData = langData.map(lang => ({
+
+    const chartData = langData;
+
+    let labelData = langData.slice(0, 5);
+    if (langData.length > 5) {
+        const othersValue = langData.slice(5).reduce((sum, lang) => sum + lang.value, 0);
+        labelData.push({
+            name: 'Others - ' + othersValue,
+            value: othersValue,
+            color: '#808080'
+        });
+    }
+    labelData = labelData.map(lang => ({
         ...lang,
         name: `${lang.name} - ${((lang.value / totalCommits) * 100).toFixed(1)}%`
     }));
-    const svgString = createDonutChartCard('Top Languages by Commit', langData, theme);
+    const svgString = createDonutChartCard('Top Languages by Commit', chartData, labelData, theme);
     return svgString;
 };
 
@@ -78,10 +90,6 @@ const getCommitsLanguageData = async function (
             color: value.color
         });
     }
-    langData.sort(function (a, b) {
-        return b.value - a.value;
-    });
-    langData = langData.slice(0, 5); // get top 5
-
+    langData.sort((a, b) => b.value - a.value);
     return langData;
 };
