@@ -37,6 +37,11 @@ const getReposPerLanguageSVG = function (
         if (customTheme.icon) theme.icon = "#" + customTheme.icon;
         if (customTheme.chart) theme.chart = "#" + customTheme.chart;
     }
+    const totalRepos = langData.reduce((sum, lang) => sum + lang.value, 0);
+    langData = langData.map(lang => ({
+        ...lang,
+        name: `${lang.name} (${((lang.value / totalRepos) * 100).toFixed(1)}%)`
+    }));
     const svgString = createDonutChartCard('Top Languages by Repo', langData, theme);
     return svgString;
 };

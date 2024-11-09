@@ -46,7 +46,9 @@ export function createDonutChartCard(
         .enter()
         .append('text')
         .text(d => {
-            return d.data.name;
+            const totalValue = d3.sum(data, d => d.value);
+            const percentage = ((d.data.value / totalValue) * 100).toFixed(1);
+            return `${d.data.name} (${percentage}%)`;
         })
         .attr('x', labelHeight * 1.2)
         .attr('y', d => labelHeight * d.index * 1.8 + card.height / 2 - radius)
