@@ -40,7 +40,7 @@ const fetcher = (token: string, variables: any) => {
             query: `
       query ReposPerLanguage($login: String!,$endCursor: String) {
         user(login: $login) {
-          repositories(isFork: true, first: 100, after: $endCursor, ownerAffiliations: OWNER) {
+          repositories(first: 100, after: $endCursor, ownerAffiliations: OWNER) {
             nodes {
               primaryLanguage {
                 name
