@@ -33,7 +33,7 @@ export function createDonutChartCard(
         .data(labelData)
         .enter()
         .append('rect')
-        .attr('y', d => labelHeight * d.index * 1.8 + card.height / 2 - radius - 12) // rect y-coordinate need fix,so I decrease y, but I don't know why this need fix.
+        .attr('y', (d, i) => labelHeight * i * 1.8 + card.height / 2 - radius - 12) // rect y-coordinate need fix,so I decrease y, but I don't know why this need fix.
         .attr('width', labelHeight)
         .attr('height', labelHeight)
         .attr('fill', labelData => labelData.color)
@@ -50,7 +50,7 @@ export function createDonutChartCard(
             return d.name;
         })
         .attr('x', labelHeight * 1.2)
-        .attr('y', d => labelHeight * d.index * 1.8 + card.height / 2 - radius)
+        .attr('y', (d, i) => labelHeight * i * 1.8 + card.height / 2 - radius)
         .style('fill', theme.text)
         .style('font-size', `${labelHeight}px`);
 
