@@ -39,7 +39,7 @@ const getReposPerLanguageSVG = function (
     }
     langData = langData.map(lang => ({
         ...lang,
-        name: `${lang.name} (${lang.value})`
+        name: `${lang.name} - ${lang.value}`
     }));
     const svgString = createDonutChartCard('Top Languages by Repo', langData, theme);
     return svgString;

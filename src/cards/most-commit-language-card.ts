@@ -57,7 +57,7 @@ const getCommitsLanguageSVG = function (
     const totalCommits = langData.reduce((sum, lang) => sum + lang.value, 0);
     langData = langData.map(lang => ({
         ...lang,
-        name: `${lang.name} (${((lang.value / totalCommits) * 100).toFixed(1)}%)`
+        name: `${lang.name} - ${((lang.value / totalCommits) * 100).toFixed(1)}%`
     }));
     const svgString = createDonutChartCard('Top Languages by Commit', langData, theme);
     return svgString;
