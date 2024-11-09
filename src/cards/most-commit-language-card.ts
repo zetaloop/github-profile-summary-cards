@@ -62,7 +62,7 @@ const getCommitsLanguageSVG = function (
     if (langData.length > 5) {
         const othersValue = langData.slice(5).reduce((sum, lang) => sum + lang.value, 0);
         labelData.push({
-            name: 'Others - ' + othersValue,
+            name: 'Others',
             value: othersValue,
             color: '#808080'
         });
