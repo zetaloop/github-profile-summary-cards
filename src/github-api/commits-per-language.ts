@@ -39,8 +39,8 @@ const fetcher = (token: string, variables: any) => {
             query: `
       query CommitLanguages($login: String!) {
         user(login: $login) {
-          contributionsCollection {
-            commitContributionsByRepository(maxRepositories: 100, includeForks: true) {
+          contributionsCollection(includeForks: true) {
+            commitContributionsByRepository(maxRepositories: 100) {
               repository {
                 primaryLanguage {
                   name
