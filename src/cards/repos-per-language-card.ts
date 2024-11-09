@@ -37,11 +37,22 @@ const getReposPerLanguageSVG = function (
         if (customTheme.icon) theme.icon = "#" + customTheme.icon;
         if (customTheme.chart) theme.chart = "#" + customTheme.chart;
     }
-    langData = langData.map(lang => ({
+    const chartData = langData;
+    
+    let labelData = langData.slice(0, 5);
+    if (langData.length > 5) {
+        const othersValue = langData.slice(5).reduce((sum, lang) => sum + lang.value, 0);
+        labelData.push({
+            name: 'Others',
+            value: othersValue,
+            color: '#808080'
+        });
+    }
+    labelData = labelData.map(lang => ({
         ...lang,
         name: `${lang.name} - ${lang.value}`
     }));
-    const svgString = createDonutChartCard('Top Languages by Repo', langData, theme);
+    const svgString = createDonutChartCard('Top Languages by Repo', chartData, labelData, theme);
     return svgString;
 };
 
@@ -57,9 +68,6 @@ const getRepoLanguageData = async function (username: string, exclude: Array<str
             color: value.color
         });
     }
-    langData.sort(function (a, b) {
-        return b.value - a.value;
-    });
-    langData = langData.slice(0, 5); // get top 5
+    langData.sort((a, b) => b.value - a.value);
     return langData;
 };
