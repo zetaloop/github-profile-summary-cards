@@ -73,6 +73,7 @@
     - A comma separated list of languages to exclude, e.g., exclude=java,rust,jupyter%20Notebook
       - You can represent a space in the language list by using '%20' when you want to include a space.
     - You can found the supported languages in [here](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml)
+    - Includes forked repositories
 
 ### Top languages in commits card
 ![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=vn7n24fzkq&theme=nord_bright)
@@ -87,6 +88,7 @@
     - A comma separated list of languages to exclude, e.g., exclude=java,rust,jupyter%20Notebook
       - You can represent a space in the language list by using '%20' when you want to include a space.
     - You can found the supported languages in [here](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml)
+    - Includes forked repositories
 
 ### GitHub stats card
 ![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=vn7n24fzkq&theme=nord_bright&)
