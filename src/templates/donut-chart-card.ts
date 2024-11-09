@@ -6,6 +6,7 @@ import {Theme} from '../const/theme';
 export function createDonutChartCard(
     title: string,
     data: {name: string; value: number; color: string}[],
+    labelData: {name: string; color: string}[],
     theme: Theme
 ) {
     const pie = d3.pie<{name: string; value: number; color: string}>().value(function (d) {
@@ -26,32 +27,41 @@ export function createDonutChartCard(
     // draw language node
 
     const panel = svg.append('g').attr('transform', `translate(${card.xPadding + margin},${0})`);
-    const labelHeight = 14;
+    const labelHeight = 13;
     panel
         .selectAll(null)
-        .data(pieData)
+        .data(labelData)
         .enter()
         .append('rect')
-        .attr('y', d => labelHeight * d.index * 1.8 + card.height / 2 - radius - 12) // rect y-coordinate need fix,so I decrease y, but I don't know why this need fix.
+        .attr('y', (d, i) => labelHeight * i * 1.6 + card.height / 2 - radius - 11) // rect y-coordinate need fix,so I decrease y, but I don't know why this need fix.
         .attr('width', labelHeight)
         .attr('height', labelHeight)
-        .attr('fill', pieData => pieData.data.color)
+        .attr('fill', labelData => labelData.color)
         .attr('stroke', `${theme.background}`)
         .style('stroke-width', '1px');
 
     // set language text
     panel
         .selectAll(null)
-        .data(pieData)
+        .data(labelData)
         .enter()
         .append('text')
-        .text(d => {
-            return d.data.name;
-        })
         .attr('x', labelHeight * 1.2)
-        .attr('y', d => labelHeight * d.index * 1.8 + card.height / 2 - radius)
-        .style('fill', theme.text)
-        .style('font-size', `${labelHeight}px`);
+        .attr('y', (d, i) => labelHeight * i * 1.6 + card.height / 2 - radius)
+        .style('font-size', `${labelHeight}px`)
+        .each(function (d) {
+            const [mainText, subText] = d.name.split(' - ');
+            d3.select(this)
+                .append('tspan')
+                .text(mainText)
+                .style('fill', theme.text);
+            if (subText) {
+                d3.select(this)
+                    .append('tspan')
+                    .text(' - ' + subText)
+                    .style('fill', theme.text + 'a0')
+            }
+        });
 
     // draw pie chart
     const g = svg
