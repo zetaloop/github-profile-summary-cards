@@ -72,6 +72,7 @@
   - exclude:
     - A comma separated list of languages to exclude, e.g., exclude=java,rust
     - You can found the supported languages in [here](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml)
+    - Includes forked repositories
 
 ### Top languages in commits card
 ![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=vn7n24fzkq&theme=nord_bright)
