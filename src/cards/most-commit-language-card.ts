@@ -54,6 +54,11 @@ const getCommitsLanguageSVG = function (
         if (customTheme.icon) theme.icon = "#" + customTheme.icon;
         if (customTheme.chart) theme.chart = "#" + customTheme.chart;
     }
+    const totalCommits = langData.reduce((sum, lang) => sum + lang.value, 0);
+    langData = langData.map(lang => ({
+        ...lang,
+        name: `${lang.name} (${((lang.value / totalCommits) * 100).toFixed(1)}%)`
+    }));
     const svgString = createDonutChartCard('Top Languages by Commit', langData, theme);
     return svgString;
 };
