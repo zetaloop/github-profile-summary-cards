@@ -5,6 +5,10 @@
     "transform": {
         "^.+\\.ts$": "ts-jest"
     },
+    "moduleNameMapper": {
+        "^axios$": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
+        "^retry-axios$": "<rootDir>/node_modules/retry-axios/dist/index.js"
+    },
     "setupFilesAfterEnv": [],
     "testMatch": ["**/*.test.ts"],
     "verbose": true,

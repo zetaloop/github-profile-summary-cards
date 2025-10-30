@@ -1,9 +1,9 @@
 import {writeSVG, OUTPUT_PATH} from '../../src/utils/file-writer';
-import {rmdirSync, readFileSync} from 'fs';
+import {rmSync, readFileSync} from 'fs';
 const targetFolder = `${OUTPUT_PATH}/test`;
 
 afterEach(() => {
-    rmdirSync(targetFolder, {recursive: true});
+    rmSync(targetFolder, {recursive: true, force: true});
 });
 describe('Test output function', () => {
     it('test write svg can work', () => {

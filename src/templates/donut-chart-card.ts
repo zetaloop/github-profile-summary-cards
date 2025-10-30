@@ -49,11 +49,12 @@ export function createDonutChartCard(
         .attr('x', labelHeight * 1.2)
         .attr('y', (d, i) => labelHeight * i * 1.7 + card.height / 2 - radius)
         .style('font-size', `${labelHeight}px`)
-        .each(function (d) {
+        .each((d, index, nodes) => {
+            const selection = d3.select(nodes[index] as SVGTextElement);
             const [mainText, subText] = d.name.split(' - ');
-            d3.select(this).append('tspan').text(mainText).style('fill', theme.text);
+            selection.append('tspan').text(mainText).style('fill', theme.text);
             if (subText) {
-                d3.select(this)
+                selection
                     .append('tspan')
                     .text(' - ' + subText)
                     .style('fill', theme.text + 'a0');
