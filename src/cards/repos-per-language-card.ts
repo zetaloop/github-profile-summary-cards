@@ -24,21 +24,24 @@ export const getReposPerLanguageSVGWithThemeName = async function (
 };
 
 const getReposPerLanguageSVG = function (
-    langData: { name: string; value: number; color: string }[],
+    langData: {name: string; value: number; color: string}[],
     themeName: string,
     customTheme: Theme | undefined
 ) {
-    let theme = { ...ThemeMap.get(themeName)! };
+    const theme = {...ThemeMap.get(themeName)!};
     if (customTheme !== undefined) {
-        if (customTheme.title) theme.title = "#" + customTheme.title;
-        if (customTheme.text) theme.text = "#" + customTheme.text;
-        if (customTheme.background) theme.background = "#" + customTheme.background;
-        if (customTheme.stroke) { theme.stroke = "#" + customTheme.stroke; theme.strokeOpacity = 1; }
-        if (customTheme.icon) theme.icon = "#" + customTheme.icon;
-        if (customTheme.chart) theme.chart = "#" + customTheme.chart;
+        if (customTheme.title) theme.title = '#' + customTheme.title;
+        if (customTheme.text) theme.text = '#' + customTheme.text;
+        if (customTheme.background) theme.background = '#' + customTheme.background;
+        if (customTheme.stroke) {
+            theme.stroke = '#' + customTheme.stroke;
+            theme.strokeOpacity = 1;
+        }
+        if (customTheme.icon) theme.icon = '#' + customTheme.icon;
+        if (customTheme.chart) theme.chart = '#' + customTheme.chart;
     }
     const chartData = langData;
-    
+
     let labelData = langData.slice(0, 5);
     if (langData.length > 5) {
         const othersValue = langData.slice(5).reduce((sum, lang) => sum + lang.value, 0);
@@ -58,7 +61,7 @@ const getReposPerLanguageSVG = function (
 
 const getRepoLanguageData = async function (username: string, exclude: Array<string>) {
     const repoLanguages = await getRepoLanguages(username, exclude);
-    let langData = [];
+    const langData = [];
 
     // make a pie data
     for (const [key, value] of repoLanguages.getLanguageMap()) {

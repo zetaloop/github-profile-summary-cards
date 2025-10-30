@@ -45,14 +45,17 @@ const getCommitsLanguageSVG = function (
             color: '#586e75'
         });
     }
-    let theme = { ...ThemeMap.get(themeName)! };
+    const theme = {...ThemeMap.get(themeName)!};
     if (customTheme !== undefined) {
-        if (customTheme.title) theme.title = "#" + customTheme.title;
-        if (customTheme.text) theme.text = "#" + customTheme.text;
-        if (customTheme.background) theme.background = "#" + customTheme.background;
-        if (customTheme.stroke) { theme.stroke = "#" + customTheme.stroke; theme.strokeOpacity = 1; }
-        if (customTheme.icon) theme.icon = "#" + customTheme.icon;
-        if (customTheme.chart) theme.chart = "#" + customTheme.chart;
+        if (customTheme.title) theme.title = '#' + customTheme.title;
+        if (customTheme.text) theme.text = '#' + customTheme.text;
+        if (customTheme.background) theme.background = '#' + customTheme.background;
+        if (customTheme.stroke) {
+            theme.stroke = '#' + customTheme.stroke;
+            theme.strokeOpacity = 1;
+        }
+        if (customTheme.icon) theme.icon = '#' + customTheme.icon;
+        if (customTheme.chart) theme.chart = '#' + customTheme.chart;
     }
     const totalCommits = langData.reduce((sum, lang) => sum + lang.value, 0);
 
@@ -80,7 +83,7 @@ const getCommitsLanguageData = async function (
     exclude: Array<string>
 ): Promise<{name: string; value: number; color: string}[]> {
     const commitLanguages: CommitLanguages = await getCommitLanguage(username, exclude);
-    let langData = [];
+    const langData = [];
 
     // make a pie data
     for (const [key, value] of commitLanguages.getLanguageMap()) {

@@ -51,15 +51,12 @@ export function createDonutChartCard(
         .style('font-size', `${labelHeight}px`)
         .each(function (d) {
             const [mainText, subText] = d.name.split(' - ');
-            d3.select(this)
-                .append('tspan')
-                .text(mainText)
-                .style('fill', theme.text);
+            d3.select(this).append('tspan').text(mainText).style('fill', theme.text);
             if (subText) {
                 d3.select(this)
                     .append('tspan')
                     .text(' - ' + subText)
-                    .style('fill', theme.text + 'a0')
+                    .style('fill', theme.text + 'a0');
             }
         });
 
