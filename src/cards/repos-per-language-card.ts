@@ -39,7 +39,27 @@ const getReposPerLanguageSVG = function (
         langData.push({name: 'There are no', value: 1, color: '#586e75'});
         langData.push({name: 'repos to show', value: 1, color: '#586e75'});
     }
-    const svgString = createDonutChartCard('Top Languages by Repo', langData, resolveTheme(themeName, override));
+
+    const labelData = langData.slice(0, 5).map(item => ({
+        name: item.name,
+        value: item.value,
+        color: item.color
+    }));
+    if (langData.length > 5) {
+        const otherCount = langData.slice(5).reduce((sum, item) => sum + item.value, 0);
+        labelData.push({
+            name: 'Others',
+            value: otherCount,
+            color: '#808080'
+        });
+    }
+
+    const svgString = createDonutChartCard(
+        'Top Languages by Repo',
+        langData,
+        resolveTheme(themeName, override),
+        labelData
+    );
     return svgString;
 };
 
@@ -50,7 +70,7 @@ const getRepoLanguageData = async function (
     excludeRepos: Array<string> = []
 ) {
     const repoLanguages = await getRepoLanguages(username, exclude, token, excludeRepos);
-    let langData = [];
+    const langData = [];
 
     // make a pie data
     for (const [key, value] of repoLanguages.getLanguageMap()) {
@@ -63,6 +83,5 @@ const getRepoLanguageData = async function (
     langData.sort(function (a, b) {
         return b.value - a.value;
     });
-    langData = langData.slice(0, 5); // get top 5
     return langData;
 };
