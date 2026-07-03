@@ -1,6 +1,5 @@
 import {Card} from './card';
 import * as d3 from 'd3';
-import {PieArcDatum} from 'd3-shape';
 import {Theme} from '../const/theme';
 
 export function createDonutChartCard(
@@ -19,7 +18,7 @@ export function createDonutChartCard(
     const radius = (Math.min(card.width, card.height) - 2 * margin - card.yPadding) / 2;
 
     const arc = d3
-        .arc<PieArcDatum<{name: string; value: number; color: string}>>()
+        .arc<d3.PieArcDatum<{name: string; value: number; color: string}>>()
         .outerRadius(radius - 10)
         .innerRadius(radius / 2);
 
@@ -81,7 +80,7 @@ export function createDonutChartCard(
         .attr('class', 'arc')
         // Per-arc index for staggered ("one-by-one") reveal animations. Inert unless an
         // animation preset references --gpsc-i; see src/utils/animation.ts.
-        .style('--gpsc-i', (d: PieArcDatum<{name: string; value: number; color: string}>) => String(d.index));
+        .style('--gpsc-i', (d: d3.PieArcDatum<{name: string; value: number; color: string}>) => String(d.index));
 
     g.append('path')
         .attr('d', arc)

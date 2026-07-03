@@ -1,7 +1,6 @@
 import {Card} from './card';
 import {Theme} from '../const/theme';
 import * as d3 from 'd3';
-import * as d3Axis from 'd3-axis';
 
 export function createProductiveCard(chartData: number[], theme: Theme, utcOffset: number) {
     const title = 'Commits ' + '(UTC ' + (utcOffset >= 0 ? '+' : '') + utcOffset.toFixed(2) + ')';
@@ -11,7 +10,7 @@ export function createProductiveCard(chartData: number[], theme: Theme, utcOffse
     const chartWidth = card.width - 60;
     const chartHeight = 100;
     const bottomScaleBand = d3.scaleBand<number>().range([0, chartWidth]).padding(0.1);
-    const bottomAxis: d3Axis.Axis<number> = d3Axis.axisBottom(bottomScaleBand);
+    const bottomAxis: d3.Axis<number> = d3.axisBottom(bottomScaleBand);
 
     if (chartData.length != 24) {
         throw Error('productive time array size should be 24');
