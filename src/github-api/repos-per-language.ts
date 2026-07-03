@@ -1,8 +1,5 @@
-import request, {assertNoGraphQLErrors, restRequest} from '../utils/request';
-import {shouldFetchNextPage} from '../const/pagination';
+import request, {assertNoGraphQLErrors} from '../utils/request';
 import {withDataCache} from '../utils/data-cache';
-import {languageColor} from '../const/language-colors';
-import {getOwnerType} from './owner-type';
 
 export class RepoLanguageInfo {
     name: string;
@@ -45,7 +42,7 @@ const fetcher = (token: string, variables: any) => {
             query: `
       query ReposPerLanguage($login: String!, $endCursor: String) {
         user(login: $login) {
-          repositories(isFork: false, first: 100, after: $endCursor, ownerAffiliations: OWNER) {
+          repositories(first: 100, after: $endCursor, ownerAffiliations: OWNER) {
             nodes {
               name
               nameWithOwner
@@ -73,14 +70,11 @@ interface RepoNode {
     primaryLanguage: {name: string; color: string | null} | null;
 }
 
-// GraphQL fetch — used off Vercel (Action/CLI), where the caller's own token
-// can see their private repos and the language colors ride along in the query.
+// GraphQL includes private repositories visible to the token and primary languages of forks.
 async function fetchNodesViaGraphQL(username: string, token: string): Promise<RepoNode[]> {
     const collected: RepoNode[] = [];
-    const startedAt = Date.now();
     let cursor: string | null = null;
     let hasNextPage = true;
-    let pages = 0;
 
     while (hasNextPage) {
         const res: any = await fetcher(token, {login: username, endCursor: cursor});
@@ -88,48 +82,7 @@ async function fetchNodesViaGraphQL(username: string, token: string): Promise<Re
         const repos = res.data.data.user.repositories;
         collected.push(...repos.nodes);
         cursor = repos.pageInfo?.endCursor ?? null;
-        pages += 1;
-        hasNextPage = shouldFetchNextPage(!!repos.pageInfo?.hasNextPage, pages, undefined, startedAt);
-    }
-    return collected;
-}
-
-// REST fetch — used on Vercel, where the service's tokens only see public
-// repos anyway, so REST returns the same data while spending the (otherwise
-// idle) REST quota instead of GraphQL points. Colors come from the bundled
-// linguist map since REST reports the language by name only.
-async function fetchNodesViaRest(username: string, token: string): Promise<RepoNode[]> {
-    // The user/org dispatch relies on the user pipeline REJECTING org logins
-    // (GraphQL returns user: null for them). REST /users/{login}/repos happily
-    // answers for orgs, so re-create that contract with the (week-cached) type
-    // lookup before fetching.
-    const ownerType = await getOwnerType(username, token);
-    if (ownerType !== 'User') {
-        throw Error(`Login is not a user: ${username}`);
-    }
-
-    const collected: RepoNode[] = [];
-    const startedAt = Date.now();
-    let hasNextPage = true;
-    let pages = 0;
-
-    while (hasNextPage) {
-        const res = await restRequest(token, `/users/${encodeURIComponent(username)}/repos`, {
-            per_page: 100,
-            page: pages + 1,
-            type: 'owner'
-        });
-        const repos: any[] = Array.isArray(res.data) ? res.data : [];
-        for (const repo of repos) {
-            if (repo.fork) continue; // GraphQL used isFork: false
-            collected.push({
-                name: repo.name,
-                nameWithOwner: repo.full_name,
-                primaryLanguage: repo.language ? {name: repo.language, color: languageColor(repo.language)} : null
-            });
-        }
-        pages += 1;
-        hasNextPage = shouldFetchNextPage(repos.length === 100, pages, undefined, startedAt);
+        hasNextPage = !!repos.pageInfo?.hasNextPage;
     }
     return collected;
 }
@@ -141,14 +94,10 @@ export async function getRepoLanguages(
     token: string,
     excludeRepos: Array<string> = []
 ): Promise<RepoLanguages> {
-    // Pagination is unbounded off Vercel and bounded to VERCEL_MAX_REPO_PAGES
-    // on Vercel (see src/const/pagination.ts).
-    // The raw node list is cached per username (filters apply after the cache
-    // boundary, so exclude lists don't fragment it). Both fetchers normalize to
-    // the same node shape, so the cache payload is transport-agnostic.
+    // The raw node list is cached per username; filters apply after fetching.
     const repoLanguages = new RepoLanguages();
     const nodes = await withDataCache(`v1:rl:${username.toLowerCase()}`, async () => {
-        return process.env.VERCEL ? fetchNodesViaRest(username, token) : fetchNodesViaGraphQL(username, token);
+        return fetchNodesViaGraphQL(username, token);
     });
 
     nodes.forEach((node: RepoNode) => {
