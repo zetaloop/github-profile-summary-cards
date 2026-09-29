@@ -326,18 +326,29 @@ const inflight = new Map<string, Promise<unknown>>();
  *     back-compat) or {freshSeconds, retentionSeconds}.
  * @return {Promise} The fresh or cached data.
  */
-export async function withDataCache<T>(
+export function withDataCache<T>(
     key: string,
     fetcher: () => Promise<T>,
     options?: number | DataCacheOptions
 ): Promise<T> {
+    return coalesce(key, () => withDataCacheUncoalesced(key, fetcher, options));
+}
+
+/**
+ * Shares a running fetch between concurrent callers.
+ *
+ * @param {string} key - The data being fetched.
+ * @param {Function} fetcher - Fetches the data.
+ * @return {Promise<T>} The shared result.
+ */
+export async function coalesce<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
     const existing = inflight.get(key);
     if (existing) {
         // Followers get data without doing any work — report it as a hit.
         recordCacheOutcome('fresh');
         return existing as Promise<T>;
     }
-    const promise = withDataCacheUncoalesced(key, fetcher, options);
+    const promise = fetcher();
     inflight.set(key, promise);
     try {
         return await promise;

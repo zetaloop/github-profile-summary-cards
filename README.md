@@ -121,6 +121,8 @@ Includes all owned repositories visible to the token, including private reposito
   - username
   - utcOffset
 
+The chart uses the account's authored commits across the full default-branch histories of owned repositories and repositories found in its contribution history. Private repositories visible to the token and forks are included; identical commits are counted once. Vercel Runtime Cache stores commit records between requests, and each refresh checks repository heads before fetching changed histories.
+
 ### Custom colors
 
 Every card endpoint also accepts these optional parameters to override individual colors of the selected `theme`:

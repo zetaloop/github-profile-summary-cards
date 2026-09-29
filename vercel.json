@@ -10,6 +10,9 @@
         }
     ],
     "functions": {
+        "api/cards/productive-time.ts": {
+            "maxDuration": 60
+        },
         "api/**/*.ts": {
             "maxDuration": 30
         }
