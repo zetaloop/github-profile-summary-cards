@@ -14,10 +14,20 @@ describe('reportUnexpectedError', () => {
         delete process.env.SENTRY_DSN;
     });
 
-    it('is a no-op without SENTRY_DSN', async () => {
-        await reportUnexpectedError(new Error('mystery boom'), 'stats_card', 'u', 'unavailable');
-        expect(Sentry.init).not.toHaveBeenCalled();
-        expect(Sentry.captureException).not.toHaveBeenCalled();
+    it('loads Sentry only when reporting a configured error', async () => {
+        jest.resetModules();
+        await jest.isolateModulesAsync(async () => {
+            const loadSentry = jest.fn(() => Sentry);
+            jest.doMock('@sentry/node', loadSentry);
+            const reporter = await import('../../api/utils/error-reporter');
+            await reporter.reportUnexpectedError(new Error('mystery boom'), 'stats_card', 'u', 'unavailable');
+            expect(loadSentry).not.toHaveBeenCalled();
+
+            process.env.SENTRY_DSN = 'https://x@sentry.example/1';
+            await reporter.reportUnexpectedError(new Error('mystery boom'), 'stats_card', 'u', 'unavailable');
+            expect(loadSentry).toHaveBeenCalledTimes(1);
+            expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+        });
     });
 
     it('skips every known failure class even with a DSN', async () => {

@@ -10,24 +10,7 @@
 // No-op when SENTRY_DSN is unset (local, Action, preview without the
 // integration), so this is safe to ship before the marketplace install.
 
-import * as Sentry from '@sentry/node';
-
 let initialized = false;
-
-function ensureInit(): boolean {
-    if (!process.env.SENTRY_DSN) return false;
-    if (!initialized) {
-        Sentry.init({
-            dsn: process.env.SENTRY_DSN,
-            environment: process.env.VERCEL_ENV ?? 'development',
-            // Errors only — no performance tracing (keeps the free quota for
-            // what matters and adds no per-request overhead).
-            tracesSampleRate: 0
-        });
-        initialized = true;
-    }
-    return true;
-}
 
 const KNOWN_ERROR_PATTERNS = [
     /rate limit/i, // GitHub primary/secondary rate limiting (GA: rate_limited)
@@ -65,8 +48,18 @@ export async function reportUnexpectedError(
     if (status === 403 || status === 429 || status === 404) return;
     const message = String((err as Error)?.message ?? '');
     if (KNOWN_ERROR_PATTERNS.some(p => p.test(message))) return;
-    if (!ensureInit()) return;
+    if (!process.env.SENTRY_DSN) return;
     try {
+        const Sentry = await import('@sentry/node');
+        if (!initialized) {
+            Sentry.init({
+                dsn: process.env.SENTRY_DSN,
+                environment: process.env.VERCEL_ENV ?? 'development',
+                // Errors only — no performance tracing.
+                tracesSampleRate: 0
+            });
+            initialized = true;
+        }
         // Never hand Sentry the raw error: axios errors carry the full request
         // config (incl. the Authorization token) which Sentry would serialize.
         // A rebuilt Error keeps the message and stack and nothing else.
