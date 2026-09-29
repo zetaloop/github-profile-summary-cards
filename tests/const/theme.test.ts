@@ -66,6 +66,7 @@ describe('resolveTheme', () => {
         const t = resolveTheme('dark', {background: '#123456', border: '#abcdef'});
         expect(t.background).toBe('#123456');
         expect(t.stroke).toBe('#abcdef'); // border maps to stroke
+        expect(t.strokeOpacity).toBe(1);
         expect(t.title).toBe(base.title); // untouched fields keep base value
     });
     it('does not mutate the shared ThemeMap entry', () => {

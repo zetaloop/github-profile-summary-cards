@@ -146,7 +146,7 @@ export function resolveTheme(themeName: string, override?: ThemeColorOverride): 
         override?.text ?? base.text,
         override?.background ?? base.background,
         override?.border ?? base.stroke,
-        base.strokeOpacity,
+        override?.border ? 1 : base.strokeOpacity,
         override?.icon ?? base.icon,
         override?.chart ?? base.chart
     );
